@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import {
   AppBar,
@@ -18,11 +18,17 @@ import HomeIcon from "@material-ui/icons/Home";
 import InfoIcon from "@material-ui/icons/Info";
 import MailIcon from "@material-ui/icons/Mail";
 import VpnKeyRoundedIcon from "@mui/icons-material/VpnKeyRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import LoginModal from "../../components/Models/login/LoginModel";
+import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import { AuthContext } from "../../utils/AuthContext";
+import UserProfileModal from "../../components/Models/profile/Profile";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: "#00C2A8",
+    width: "100%",
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -33,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     fontWeight: "bold",
     marginLeft: theme.spacing(2),
+    fontFamily: "Belanosima, sans-serif",
   },
   drawer: {
     width: 200,
@@ -46,8 +53,9 @@ const useStyles = makeStyles((theme) => ({
     color: "#fff",
   },
   listItemText: {
-    fontSize: "1rem",
-    fontWeight: "bold",
+    fontSize: "1.1rem",
+    fontWeight: "550",
+    fontFamily: "Belanosima, sans-serif",
   },
   loginButton: {
     width: "100%",
@@ -60,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "Belanosima, sans-serif",
     "&:hover": {
       backgroundColor: "#333",
     },
@@ -73,6 +82,8 @@ const Navbar = () => {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(false);
   const [openModel, setopenModel] = useState(false);
+  const [profileModel, setProfileModel] = useState(false);
+  const { currentUser } = useContext(AuthContext);
 
   const toggleDrawer = (open) => () => {
     setIsOpen(open);
@@ -86,16 +97,38 @@ const Navbar = () => {
     setopenModel(false);
   };
 
+  const handleProfileModel = () => {
+    setProfileModel(true);
+  };
+
+  const handleCloseProfile = () => {
+    setProfileModel(false);
+  };
+
   const menuItems = [
     { text: "Home", icon: <HomeIcon />, link: "/" },
     { text: "About", icon: <InfoIcon />, link: "/about" },
     { text: "Contact Us", icon: <MailIcon />, link: "/contact-us" },
   ];
 
+  if (!currentUser) {
+    menuItems.push({
+      text: "Dashboard",
+      icon: <DashboardRoundedIcon />,
+      link: "/user/dashboard",
+    });
+  }
+
   return (
     <div>
       {openModel && (
         <LoginModal openModel={openModel} onClose={() => setopenModel(false)} />
+      )}
+      {profileModel && (
+        <UserProfileModal
+          openModel={profileModel}
+          onClose={() => setProfileModel(false)}
+        />
       )}
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
@@ -111,6 +144,18 @@ const Navbar = () => {
           <Typography variant="h6" className={classes.title}>
             SCAN-WISE (FY 2023-24)
           </Typography>
+          {currentUser ? (
+            <Button
+              className={classes.listItemIcon}
+              onClick={handleProfileModel}
+            >
+              <AccountCircleRoundedIcon />
+            </Button>
+          ) : (
+            <Button className={classes.listItemIcon} onClick={handleOpenModel}>
+              <AccountCircleRoundedIcon style={{ fontSize: "2rem" }} />
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer anchor="left" open={isOpen} onClose={toggleDrawer(false)}>
@@ -129,7 +174,7 @@ const Navbar = () => {
                 to={link}
                 disableRipple
                 style={{ borderRadius: "12px" }}
-                className={className} // Pass the className prop here
+                className={className} 
               >
                 <ListItemIcon className={classes.listItemIcon}>
                   {icon}
@@ -140,14 +185,22 @@ const Navbar = () => {
                 />
               </ListItem>
             ))}
-            <Button className={classes.loginButton} onClick={handleOpenModel}>
-              <VpnKeyRoundedIcon className={classes.loginIcon} />
-              Login
-            </Button>
+            {currentUser ? (
+              <Button className={classes.loginButton} onClick={handleOpenModel}>
+                <LogoutRoundedIcon className={classes.loginIcon} />
+                Logout
+              </Button>
+            ) : (
+              <Button className={classes.loginButton} onClick={handleOpenModel}>
+                <VpnKeyRoundedIcon className={classes.loginIcon} />
+                Login
+              </Button>
+            )}
           </List>
         </div>
       </Drawer>
       <LoginModal open={openModel} onClose={handleCloseModel} />
+      <UserProfileModal open={profileModel} onClose={handleCloseProfile} />
     </div>
   );
 };
