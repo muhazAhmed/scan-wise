@@ -6,7 +6,6 @@
     box-sizing: border-box;
     font-family: 'Belanosima', sans-serif;
     letter-spacing: 1px;
-    background-color: #F5F5F5;
 }
 
 html::-webkit-scrollbar {
@@ -43,4 +42,10 @@ button[disabled]:hover {
     border: none;
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+@media screen and (max-width: 768px) {
+    .admin img{
+        display: none;
+    }
 }
