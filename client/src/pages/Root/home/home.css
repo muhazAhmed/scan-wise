@@ -1,0 +1,22 @@
+.home{
+    display: flex;
+    align-items: center;
+    height: 90vh;
+}
+
+@media screen and (max-width: 768px) {
+    .home{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .home .title{
+        font-size: small;
+    }
+
+    .home .img{
+        position: relative;
+        bottom: 100px;
+        height: 35vh;
+    }
+}
