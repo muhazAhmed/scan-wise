@@ -15,6 +15,7 @@ export const ServerVariables = {
   // ============= Product ================
   getProduct: "api/product/get",
   getProductById: "api/product/:id",
+  getProductByName: "api/order?name",
   addProduct: "api/product/add",
   updateProduct: "api/product/:id",
   deleteProduct: "api/product/:id",

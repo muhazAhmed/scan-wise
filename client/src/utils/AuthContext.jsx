@@ -1,5 +1,11 @@
 import axios from "axios";
-import { createContext, useEffect, useState, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import { API_URL } from "../assets/API/API_URL";
 import { ServerVariables } from "./ServerVariables";
 
@@ -10,13 +16,13 @@ export const AuthContextProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("user")) || null
   );
 
-  const login = useCallback(async (inputs) => {
-    const res = await axios.post(API_URL+ServerVariables.Login, inputs);
+  const login = useCallback(async (inputs, login) => {
+    const res = await axios.post(API_URL + login, inputs);
     setCurrentUser(res.data);
   }, []);
 
   const logout = useCallback(async () => {
-    await axios.post(API_URL+ServerVariables.Logout);
+    await axios.post(API_URL + ServerVariables.logoutEmp);
     setCurrentUser(null);
   }, []);
 
@@ -28,7 +34,10 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  const authContextValue = useMemo(() => ({ currentUser, login, logout }), [currentUser, login, logout]);
+  const authContextValue = useMemo(
+    () => ({ currentUser, login, logout }),
+    [currentUser, login, logout]
+  );
 
   return (
     <AuthContext.Provider value={authContextValue}>
