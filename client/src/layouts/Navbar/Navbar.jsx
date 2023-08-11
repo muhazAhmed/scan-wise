@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link, Link as RouterLink } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -83,7 +83,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openModel, setopenModel] = useState(false);
   const [profileModel, setProfileModel] = useState(false);
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, logout } = useContext(AuthContext);
 
   const toggleDrawer = (open) => () => {
     setIsOpen(open);
@@ -186,10 +186,10 @@ const Navbar = () => {
               </ListItem>
             ))}
             {currentUser ? (
-              <Button className={classes.loginButton} onClick={handleOpenModel}>
+              <Link to="/"><Button className={classes.loginButton} onClick={logout}>
                 <LogoutRoundedIcon className={classes.loginIcon} />
                 Logout
-              </Button>
+              </Button></Link>
             ) : (
               <Button className={classes.loginButton} onClick={handleOpenModel}>
                 <VpnKeyRoundedIcon className={classes.loginIcon} />
