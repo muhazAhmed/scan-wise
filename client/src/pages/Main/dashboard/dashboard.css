@@ -1,0 +1,28 @@
+.dashboard{
+    height: 90vh;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.dashboard .sidebar{
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard{
+        gap: 2rem;
+    }
+
+    .dashboard .prod-admin{
+        margin-top: 1rem;
+    }
+
+    .dashboard .prod-grid{
+        height: auto;
+        width: 2rem;
+        margin-bottom: 1rem;
+    }
+}
