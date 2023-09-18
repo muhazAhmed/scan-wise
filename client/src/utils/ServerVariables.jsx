@@ -28,9 +28,9 @@ export const ServerVariables = {
   deleteOrder: "api/order/:id",
 
   // ============= Cart ================
-  getCart: "api/order/get",
-  getCartById: "api/order/:id",
-  createCart: "api/order/add",
-  editCart: "api/order/:id",
-  deleteCart: "api/order/:id",
+  getCart: "api/cart/get",
+  getCartById: "api/cart/:id",
+  createCart: "api/cart/add",
+  editCart: "api/cart/:id",
+  deleteCart: "api/cart/:id",
 };

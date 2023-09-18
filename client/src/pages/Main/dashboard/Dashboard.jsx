@@ -114,12 +114,17 @@ const AddProduct = () => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  const clearFiels = () => {
+    setInputs({ ...inputs, name: "", price: "", minQuantity: "", weight: "", catogory: "" });
+  }
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
       await axios.post(API_URL + ServerVariables.addProduct, inputs);
       toast.success("Product added successfully");
       fetchProduct();
+      clearFiels();
     } catch (err) {
       toast.error(err.response.data);
     }
@@ -155,6 +160,7 @@ const AddProduct = () => {
               label="Product Name"
               variant="outlined"
               name="name"
+              value={inputs.name}
               onChange={handleChange}
             />
             <TextField
@@ -163,6 +169,7 @@ const AddProduct = () => {
               variant="outlined"
               type="number"
               name="price"
+              value={inputs.price}
               onChange={handleChange}
             />
             <FormControl
@@ -196,6 +203,7 @@ const AddProduct = () => {
               variant="outlined"
               type="number"
               name="minQuantity"
+              value={inputs.minQuantity}
               disabled={allow === false}
               onChange={handleChange}
             />

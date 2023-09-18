@@ -2,13 +2,16 @@ const mongoose = require("mongoose");
 
 const cartSchema = new mongoose.Schema(
   {
-    customerNumber: {
-      type: String,
-      required: true,
+    billNo: {
+      type: Number,
     },
     items: [
       {
-        productName: {
+        customerNumber: {
+          type: String,
+          required: true,
+        },
+        name: {
           type: String,
           required: true,
         },
@@ -27,6 +30,7 @@ const cartSchema = new mongoose.Schema(
     ],
     totalQuantity: {
       type: Number,
+      default: 1,
     },
     totalPrice: {
       type: Number,

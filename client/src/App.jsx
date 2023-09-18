@@ -4,8 +4,9 @@ import "./index.css";
 import Navbar from "./layouts/Navbar/Navbar";
 import PageNotFound from "./pages/Root/404/PageNotFound";
 import Loading from "./components/Models/Loading/Loading";
+import ProtectedRoute from "./utils/ProtectiveRoutes";
 
-// Import your components lazily
+// Import components lazily
 const Home = React.lazy(() => import("./pages/Root/home/Home"));
 const About = React.lazy(() => import("./pages/Root/about/About"));
 const AdminLogin = React.lazy(() => import("./pages/User/admin/login/AdminLogin"));
@@ -32,10 +33,10 @@ function App() {
             <Route path="/register/admin" element={<AdminRegister />} />
 
             {/* ============== Protected Route ======== */}
-            <Route path="/user/dashboard" element={<Dashboard />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/user/cart" element={<Cart />} />
-            <Route path="/user/payment" element={<Payment />} />
+            <Route path="/user/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/user/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+            <Route path="/user/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
 
             <Route path="/*" element={<PageNotFound />} />
           </Routes>

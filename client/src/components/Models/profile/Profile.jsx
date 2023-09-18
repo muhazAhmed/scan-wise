@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Modal,
   Backdrop,
@@ -8,6 +8,7 @@ import {
   IconButton,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
+import { AuthContext } from "../../../utils/AuthContext";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -31,8 +32,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UserProfileModal = ({ open, onClose, userProfileData }) => {
+const UserProfileModal = ({ open, onClose }) => {
   const classes = useStyles();
+  const { currentUser } = useContext(AuthContext);
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      let isAdmin = currentUser.User.isAdmin;
+      if (isAdmin === true) {
+        setAdmin(true);
+      }
+    }
+  }, [currentUser]);
 
   return (
     <Modal
@@ -57,17 +69,29 @@ const UserProfileModal = ({ open, onClose, userProfileData }) => {
             <CloseIcon />
           </IconButton>
           <Typography variant="h5" gutterBottom>
-            User Profile
+            {admin ? "Admin Profile" : "User Profile"}
           </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            Name: 
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            Email: 
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            Age: 
-          </Typography>
+          {admin && (
+            <Typography variant="subtitle1" gutterBottom>
+              Name: {currentUser && currentUser.User.firstname}{" "}
+              {currentUser && currentUser.User.lastname}
+            </Typography>
+          )}
+          {admin && (
+            <Typography variant="subtitle1" gutterBottom>
+              Email: {currentUser && currentUser.User.email}
+            </Typography>
+          )}
+          {admin && (
+            <Typography variant="subtitle1" gutterBottom>
+              Phone: {currentUser && currentUser.User.phone}
+            </Typography>
+          )}
+          {!admin && (
+            <Typography variant="subtitle1" gutterBottom>
+              Username: {currentUser && currentUser.User.username}
+            </Typography>
+          )}
           {/* Add other user profile details as needed */}
         </div>
       </Fade>

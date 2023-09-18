@@ -72,7 +72,7 @@ const Home = () => {
             <Button
               variant="text"
               className={classes.button}
-              style={{ width: "100%" }}
+              style={{ width: "130%" }}
             >
               Dashboard
             </Button>

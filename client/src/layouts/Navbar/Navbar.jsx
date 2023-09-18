@@ -111,7 +111,7 @@ const Navbar = () => {
     { text: "Contact Us", icon: <MailIcon />, link: "/contact-us" },
   ];
 
-  if (!currentUser) {
+  if (currentUser) {
     menuItems.push({
       text: "Dashboard",
       icon: <DashboardRoundedIcon />,
@@ -126,7 +126,7 @@ const Navbar = () => {
       )}
       {profileModel && (
         <UserProfileModal
-          openModel={profileModel}
+          open={profileModel}
           onClose={() => setProfileModel(false)}
         />
       )}

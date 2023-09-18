@@ -1,4 +1,7 @@
 const admin = require("../models/admin");
+const product = require("../models/product");
+const order = require("../models/order");
+const cart = require("../models/cart");
 const jwt = require("jsonwebtoken");
 const valid = require("../utils/validator");
 const bcrypt = require("bcrypt");
@@ -227,6 +230,26 @@ const fetchAdmin = async (req, res) => {
   }
 };
 
+// ====================== Admin Dashboard ==============
+const adminDashboard = async (req, res) => {
+  try {
+    let data =req.body;
+    let {totalProducts, totalCustomers, totalTransactions, totalItemsSold} = data;
+    
+    let productDB = await product.find({})
+    let orderDB = await order.find({})
+    let cartDB = await cart.find({})
+
+    data.totalProducts = productDB.length
+    data.totalCustomers = orderDB.length
+    data.totalTransactions = cartDB.length
+    return res.status(200).json(data)
+
+  } catch (error) {
+    return res.status(500).json(error.message);
+  }
+}
+
 module.exports = {
   register,
   login,
@@ -234,4 +257,5 @@ module.exports = {
   deleteAdmin,
   updateAdmin,
   fetchAdmin,
+  adminDashboard
 };

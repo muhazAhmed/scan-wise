@@ -18,13 +18,13 @@ const productSchema = new mongoose.Schema(
     },
     weight: {
       type: String,
-      enum: ["gm", "kg", "ml", "l"],
+      enum: ["g", "kg", "ml", "l", ""],
     },
     catogory: {
       type: String,
       enum: [
         "fruit",
-        "vegitable",
+        "vegetable",
         "drinkable",
         "electronics",
         "accessories",
@@ -33,6 +33,7 @@ const productSchema = new mongoose.Schema(
         "stationery",
         "furniture",
         "other",
+        "",
       ],
     },
   },
