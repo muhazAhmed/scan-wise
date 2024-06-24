@@ -11,7 +11,7 @@ const register = async(req, res) => {
         // ============= Only 1 employee data can be present in DB ===============
         let checkIfEmpAvailable = await employee.find()
         if (checkIfEmpAvailable.length === 1){
-            return res.status(400).json("Employee aldready registered, either delete existing or login");
+            return res.status(400).json("Employee already registered, either delete existing or login");
         }
 
         if (!username) {
@@ -34,7 +34,7 @@ const register = async(req, res) => {
         data.password = await bcrypt.hash(data.password, salt);
 
         let saveData = await employee.create(data)
-        return res.status(200).json({message : "Registration successfull", saveData})
+        return res.status(200).json({message : "Registration Successful", saveData})
         
     } catch (error) {
         return res.status(500).json(error);

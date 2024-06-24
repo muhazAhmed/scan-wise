@@ -3,7 +3,7 @@ const product = require("../models/product");
 const addProduct = async (req, res) => {
   try {
     let data = req.body;
-    let { name, code, price, minQuantity, weight, catogory } = data;
+    let { name, code, price, minQuantity, weight, category } = data;
 
     if (!name) {
       return res.status(400).json("Please enter product name");
@@ -11,7 +11,7 @@ const addProduct = async (req, res) => {
     if (!price) {
       return res.status(400).json("Please enter product price");
     }
-    if (!catogory) {
+    if (!category) {
       return res.status(400).json("Please select product category");
     }
 
@@ -37,9 +37,9 @@ const addProduct = async (req, res) => {
     }
 
     if (
-      catogory === "fruit" ||
-      catogory === "vegetable" ||
-      catogory === "drinkable"
+      category === "fruit" ||
+      category === "vegetable" ||
+      category === "drinkable"
     ) {
       if (!minQuantity)
         return res.status(400).json("Please Enter the minimum quantity");
@@ -47,13 +47,13 @@ const addProduct = async (req, res) => {
     }
 
     if (
-      catogory === "electronics" ||
-      catogory === "accessories" ||
-      catogory === "clothing" ||
-      catogory === "beauty" ||
-      catogory === "stationery" ||
-      catogory === "furniture" ||
-      catogory === "other"
+      category === "electronics" ||
+      category === "accessories" ||
+      category === "clothing" ||
+      category === "beauty" ||
+      category === "stationery" ||
+      category === "furniture" ||
+      category === "other"
     ) {
       if (weight) {
         data.weight = "";
@@ -91,7 +91,7 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     let data = req.body;
-    let { name, price, minQuantity, weight, catogory } = data;
+    let { name, price, minQuantity, weight, category } = data;
 
     await product.updateOne({ _id: req.params.id }, { $set: data });
     return res.status(200).json("Product has been updated successfully");
