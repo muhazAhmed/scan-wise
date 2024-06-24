@@ -12,7 +12,11 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 import AvatarBackground from "../../../../assets/images/loginAdmin.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { API_URL } from "../../../../assets/API/API_URL";
+import { ServerVariables } from "../../../../utils/ServerVariables";
+import toast from "react-hot-toast";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -56,6 +60,7 @@ const EmpRegister = () => {
     confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -65,9 +70,15 @@ const EmpRegister = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
-  const handleLogin = () => {
-    // Add your login logic here
-    console.log("Logged in as employee");
+  const handleRegister = async() => {
+    try {
+      await axios.post(API_URL + ServerVariables.registerEmp, inputs);
+      toast.success("Register Successful, Please login");
+      navigate("/login/emp");
+    } catch (error) {
+      console.log(error.message)
+      toast.error(err.response.data);
+    }
   };
 
   return (
@@ -126,7 +137,7 @@ const EmpRegister = () => {
             className={classes.button}
             variant="contained"
             color="primary"
-            onClick={handleLogin}
+            onClick={handleRegister}
           >
             Register
           </Button>

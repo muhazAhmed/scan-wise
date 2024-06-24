@@ -23,6 +23,12 @@ import { API_URL } from "../../../assets/API/API_URL";
 import { ServerVariables } from "../../../utils/ServerVariables";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import {
+  arrayOfCategories,
+  arrayOfWeightUnits,
+  gridStructure,
+  inputValidationArray,
+} from "./ArrayOfItems";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -53,16 +59,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const columns = [
-  { field: "id", headerName: "ID", width: 70 },
-  { field: "name", headerName: "Product Name", width: 180 },
-  { field: "code", headerName: "Code", width: 100 },
-  { field: "price", headerName: "Price", width: 100 },
-  { field: "minQuantity", headerName: "Min. Quantity", width: 130 },
-  { field: "weight", headerName: "Weight", width: 100 },
-  { field: "catogory", headerName: "Category", width: 150 },
-];
-
 const AddProduct = () => {
   const classes = useStyles();
   const [inputs, setInputs] = useState({
@@ -70,14 +66,15 @@ const AddProduct = () => {
     price: "",
     minQuantity: "",
     weight: "",
-    catogory: "",
+    category: "",
   });
   const { currentUser } = useContext(AuthContext);
   const [admin, setAdmin] = useState(false);
   const [allow, setAllow] = useState(false);
   const [page, setPage] = useState(0); // Current page number (0-based index)
-  const [totalPages, setTotalPages] = useState(1); // Initialize totalPages
+  const [totalPages, setTotalPages] = useState(2); // Initialize totalPages
   const [productData, setProductData] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState([]);
 
   useEffect(() => {
     if (currentUser) {
@@ -114,9 +111,16 @@ const AddProduct = () => {
     setInputs((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const clearFiels = () => {
-    setInputs({ ...inputs, name: "", price: "", minQuantity: "", weight: "", catogory: "" });
-  }
+  const clearField = () => {
+    setInputs({
+      ...inputs,
+      name: "",
+      price: "",
+      minQuantity: "",
+      weight: "",
+      category: "",
+    });
+  };
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -124,18 +128,18 @@ const AddProduct = () => {
       await axios.post(API_URL + ServerVariables.addProduct, inputs);
       toast.success("Product added successfully");
       fetchProduct();
-      clearFiels();
+      clearField();
     } catch (err) {
       toast.error(err.response.data);
     }
   };
 
+  const handleSelectedProduct = (product) => {
+    setSelectedProduct((prev) => [...prev, product]);
+  };
+
   useEffect(() => {
-    if (
-      inputs.catogory === "fruit" ||
-      inputs.catogory === "vegetable" ||
-      inputs.catogory === "drinkable"
-    ) {
+    if (inputValidationArray.includes(inputs.category)) {
       setAllow(true);
     }
   }, [inputs]);
@@ -180,21 +184,16 @@ const AddProduct = () => {
               <InputLabel id="category-label">Category</InputLabel>
               <Select
                 labelId="category-label"
-                name="catogory"
-                value={inputs.catogory}
+                name="category"
+                value={inputs.category}
                 onChange={handleChange}
                 label="Category"
               >
-                <MenuItem value="fruit">Fruit</MenuItem>
-                <MenuItem value="vegetable">Vegetable</MenuItem>
-                <MenuItem value="drinkable">Drinkable</MenuItem>
-                <MenuItem value="electronics">Electronics</MenuItem>
-                <MenuItem value="accessories">Accessories</MenuItem>
-                <MenuItem value="clothing">Clothing</MenuItem>
-                <MenuItem value="beauty">Beauty</MenuItem>
-                <MenuItem value="stationery">Stationery</MenuItem>
-                <MenuItem value="furniture">Furniture</MenuItem>
-                <MenuItem value="other">Other</MenuItem>
+                {arrayOfCategories.map((item, index) => (
+                  <MenuItem value={item.value} key={index}>
+                    {item.label}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <TextField
@@ -222,10 +221,11 @@ const AddProduct = () => {
                 onChange={handleChange}
                 label="Weight"
               >
-                <MenuItem value="ml">Milliliter (ml)</MenuItem>
-                <MenuItem value="l">Liter (l)</MenuItem>
-                <MenuItem value="g">Gram (g)</MenuItem>
-                <MenuItem value="kg">Kilogram (kg)</MenuItem>
+                {arrayOfWeightUnits.map((item, index) => (
+                  <MenuItem value={item.value} key={index}>
+                    {item.label}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
 
@@ -253,7 +253,7 @@ const AddProduct = () => {
         <>
           <DataGrid
             rows={productData}
-            columns={columns}
+            columns={gridStructure}
             pageSize={10}
             pagination
             page={page}
@@ -262,6 +262,7 @@ const AddProduct = () => {
             pageSizeOptions={[10, 25, 50, 100]}
             slots={{ toolbar: GridToolbar }}
             checkboxSelection
+            onCellClick={(e) => handleSelectedProduct(e.row)}
           />
           <Pagination
             count={totalPages}
@@ -292,7 +293,7 @@ const AddProduct = () => {
             variant="contained"
             className={classes.button}
             title="Edit Product"
-            disabled={admin === false}
+            // disabled={admin === false}
             style={{ backgroundColor: "#845EC2" }}
           >
             <EditNoteRoundedIcon className={classes.loginIcon} />

@@ -1,19 +1,25 @@
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 
-const cardSlice = createSlice({
-  name: "Cart",
-  initialState: [],
+const cartSlice = createSlice({
+  name: "cart",
+  initialState: {
+    items: [], // Initialize items as an array in the state
+  },
   reducers: {
     addItem: (state, action) => {
-      state.push(action.payload);
+      state.items.push(action.payload); // Modify items directly in the state
+    },
+    removeItem: (state, action) => {
+      state.items = state.items.filter((item) => item.id !== action.payload); // Remove item from items array
     },
   },
 });
 
-export const getSelector = createSelector(
-    (state) => state.cart,
-    (state) => state
-)
+export const { addItem, removeItem } = cartSlice.actions; // Export actions
 
-export const {addItem} = cardSlice.actions
-export default cardSlice.reducer;
+export const getSelector = createSelector(
+  (state) => state.cart.items, // Selector to retrieve items from state
+  (items) => items
+);
+
+export default cartSlice.reducer; // Export reducer

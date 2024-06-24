@@ -18,7 +18,7 @@ import { API_URL } from "../../../assets/API/API_URL";
 import { ServerVariables } from "../../../utils/ServerVariables";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
-import { getSelector } from "../../../redux/slices/CartSlice";
+import { getSelector, removeItem } from "../../../redux/slices/CartSlice";
 import { useDispatch } from "react-redux";
 import { addItem } from "../../../redux/slices/CartSlice";
 import axios from "axios";
@@ -62,16 +62,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DeleteButton = ({ handleDelete, rowId }) => (
-  <Button
-    onClick={() => handleDelete(rowId)}
-    color="secondary"
-    size="small"
-    startIcon={<DeleteSweepRoundedIcon />}
-  >
-    Delete
-  </Button>
-);
+const DeleteButton = ({ handleDelete, rowId }) => {
+  const dispatch = useDispatch();
+  return (
+    <Button
+      onClick={() => dispatch(removeItem(rowId))}
+      color="secondary"
+      size="small"
+      startIcon={<DeleteSweepRoundedIcon />}
+    >
+      Delete
+    </Button>
+  );
+};
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
@@ -86,15 +89,10 @@ const columns = [
     headerName: "Delete",
     width: 100,
     renderCell: (params) => (
-      <DeleteButton handleDelete={handleDelete} rowId={params.row.id} />
+      <DeleteButton handleDelete={params.handleDelete} rowId={params.row.id} />
     ),
   },
 ];
-
-const handleDelete = (id) => {
-  // Add your logic here to handle the delete action based on the id
-  console.log("Delete clicked for item with ID:", id);
-};
 
 const Cart = () => {
   const dispatch = useDispatch();
@@ -109,7 +107,7 @@ const Cart = () => {
   const [page, setPage] = useState(0);
   const [allow, setAllow] = useState(false);
   const [proceed, setProceed] = useState(false);
-  const [openModel, setopenModel] = useState(false);
+  const [openModel, setOpenModel] = useState(false);
   const [loading, setLoading] = useState(false);
   const [productOptions, setProductOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -134,7 +132,10 @@ const Cart = () => {
 
   useEffect(() => {
     handleSearchChange();
-    const newGrandTotal = items.reduce((total, item) => total + item.totalPrice, 0);
+    const newGrandTotal = items.reduce(
+      (total, item) => total + item.totalPrice,
+      0
+    );
     setGrandTotal(newGrandTotal);
   }, [items]);
 
@@ -155,9 +156,9 @@ const Cart = () => {
     }
   };
 
-  const clearFiels = () => {
-    setInputs({ ...inputs, customerNumber: "", totalQuantity: ""});
-  }
+  const clearField = () => {
+    setInputs({ ...inputs, productName: "", totalQuantity: "" });
+  };
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
@@ -171,7 +172,7 @@ const Cart = () => {
       await axios.post(API_URL + ServerVariables.createOrder, orderData);
       dispatch(
         addItem({
-          id : selectedProduct._id,
+          id: selectedProduct._id,
           customerNumber: inputs.customerNumber,
           productName: inputs.productName,
           code: selectedProduct.code,
@@ -182,7 +183,7 @@ const Cart = () => {
         })
       );
       setProceed(true);
-      clearFiels();
+      clearField();
       toast.success("Product added to the list");
     } catch (err) {
       console.log(err.response.data);
@@ -190,34 +191,31 @@ const Cart = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`${API_URL}${ServerVariables.deleteCart}/${id}`);
-      setCartItems(cartItems.filter((item) => item._id !== id));
-      console.log("Deleted item with ID:", id);
-    } catch (error) {
-      console.log(error.response.data);
-      toast.error("Error deleting item");
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   try {
+  //     await axios.delete(`${API_URL}${ServerVariables.deleteCart}/${id}`);
+  //     setCartItems(cartItems.filter((item) => item._id !== id));
+  //     console.log("Deleted item with ID:", id);
+  //   } catch (error) {
+  //     console.log(error.response.data);
+  //     toast.error("Error deleting item");
+  //   }
+  // };
 
   // const filteredData = items.reduce;
 
   const handleOpenModel = () => {
-    setopenModel(true);
+    setOpenModel(true);
   };
 
   const handleCloseModel = () => {
-    setopenModel(false);
+    setOpenModel(false);
   };
 
   return (
     <div className="cart">
-      <CouponCode
-        open={openModel}
-        onClose={handleCloseModel}
-        data={items}
-      />
+      {loading && <Loading />}
+      <CouponCode open={openModel} onClose={handleCloseModel} data={items} />
       <div
         className="prod-grid"
         style={{
@@ -277,6 +275,7 @@ const Cart = () => {
               />
               <Autocomplete
                 className={classes.textField}
+                value={selectedProduct}
                 disabled={allow === false}
                 options={productOptions}
                 getOptionLabel={(option) => option.name}
@@ -326,7 +325,8 @@ const Cart = () => {
                   textAlign: "center",
                 }}
               >
-                Total Amount : <span style={{ color: "var(--red)" }}>₹{grandTotal}</span>
+                Total Amount :{" "}
+                <span style={{ color: "var(--red)" }}>₹{grandTotal}</span>
               </Typography>
               <Button
                 className={classes.printBtn}

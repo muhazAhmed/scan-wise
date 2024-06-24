@@ -76,9 +76,9 @@ const AdminRegister = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(API_URL + ServerVariables.registerAdmin, inputs);
-      toast.success("Register Successfull, please login");
-      navigate("/login/admin");
+      await axios.post(API_URL + ServerVariables.registerEmp, inputs);
+      toast.success("Register Successful, please login");
+      navigate("/login/emp");
     } catch (err) {
       toast.error(err.response.data);
     }
